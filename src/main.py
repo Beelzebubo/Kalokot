@@ -41,7 +41,6 @@ from src.shared.llm import LLMClient, create_llm_client
 from src.shared.jurisdiction import JurisdictionLoader
 from src.shared.chunker import DocumentChunker
 from src.shared.chunking import chunk_constitution
-from src.shared.chroma_store import ChromaLegalStore
 
 # Backward compatibility wrapper for CLI/Gradio
 def get_llm(provider: str | None = None,
@@ -139,6 +138,7 @@ def run_cli(file_path: str, no_llm: bool = False,
             # Search the Constitution via ChromaDB (semantic retrieval)
             constitution_context = ""
             try:
+                from src.shared.chroma_store import ChromaLegalStore
                 chroma_store = ChromaLegalStore()
                 if chroma_store.count() > 0:
                     search_results = chroma_store.search(question, top_k=4)
@@ -200,6 +200,7 @@ def run_ui(provider: str | None = None, phi_model: str | None = None):
     chunker = DocumentChunker()
 
     # Initialize ChromaDB with Constitution of Nepal
+    from src.shared.chroma_store import ChromaLegalStore
     chroma_store = ChromaLegalStore()
     constitution_path = Path(__file__).resolve().parent.parent / "docs" / "legal" / "np_constitution.yaml"
     if constitution_path.exists():

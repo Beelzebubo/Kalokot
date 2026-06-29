@@ -7,15 +7,18 @@ FROM python:3.11-slim AS builder
 
 WORKDIR /build
 COPY requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+RUN pip install --no-cache-dir --user -r requirements.txt && \
+    python3 -c "from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2; ONNXMiniLM_L6_V2()(['pre-download onnx model'])" && \
+    rm -f /root/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz
 
 FROM python:3.11-slim
 
 RUN useradd -m -u 1000 justice && \
-    mkdir -p /data /logs /uploads /docs/legal && \
-    chown -R justice:justice /data /logs /uploads
+    mkdir -p /data /logs /uploads /docs/legal /home/justice/.cache && \
+    chown -R justice:justice /data /logs /uploads /home/justice/.cache
 
 COPY --from=builder /root/.local /home/justice/.local
+COPY --chown=justice:justice --from=builder /root/.cache/chroma /home/justice/.cache/chroma
 COPY --chown=justice:justice src/ /app/src/
 COPY --chown=justice:justice docs/ /app/docs/
 COPY --chown=justice:justice .env.example /app/.env

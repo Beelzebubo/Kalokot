@@ -1011,7 +1011,6 @@ def main():
     @app.on_event("startup")
     async def startup():
         asyncio.create_task(_cleanup_sessions())
-        await _index_constitution()
 
     async def _index_constitution():
         """Index the Constitution of Nepal into ChromaDB on startup."""
