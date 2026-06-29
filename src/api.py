@@ -379,7 +379,7 @@ async def constitution_search(
 
         from src.shared.chroma_store import ChromaLegalStore
         from pathlib import Path
-            store = ChromaLegalStore()
+        store = ChromaLegalStore()
 
         if store.count() == 0:
             path = LEGAL_DIR / "np_constitution.yaml"
@@ -1017,7 +1017,7 @@ def main():
         """Index the Constitution of Nepal into ChromaDB on startup."""
         try:
             from src.shared.chroma_store import ChromaLegalStore
-        store = ChromaLegalStore()
+            store = ChromaLegalStore()
             if store.count() == 0:
                 path = LEGAL_DIR / "np_constitution.yaml"
                 if path.exists():
