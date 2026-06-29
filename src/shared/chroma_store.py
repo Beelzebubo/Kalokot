@@ -25,8 +25,14 @@ import atexit
 import signal
 import chromadb
 from chromadb.config import Settings
-from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 from chromadb.errors import NotFoundError, ChromaError
+
+try:
+    from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
+    _sentence_transformer_available = True
+except ImportError:
+    _sentence_transformer_available = False
+    SentenceTransformerEmbeddingFunction = None
 
 from .chunking import (
     Chunk,
@@ -84,13 +90,12 @@ class ChromaLegalStore:
         try:
             self._collection = self._client.get_collection(collection_name)
         except NotFoundError:
-            self._collection = self._client.create_collection(
-                name=collection_name,
-                metadata={"hnsw:space": "cosine"},
-                embedding_function=SentenceTransformerEmbeddingFunction(
+            kwargs = dict(name=collection_name, metadata={"hnsw:space": "cosine"})
+            if _sentence_transformer_available:
+                kwargs["embedding_function"] = SentenceTransformerEmbeddingFunction(
                     model_name="all-MiniLM-L6-v2"
-                ),
-            )
+                )
+            self._collection = self._client.create_collection(**kwargs)
 
         # In-memory cache of parent chunks for fast resolution
         self._parents: Dict[str, ParentChunk] = {}

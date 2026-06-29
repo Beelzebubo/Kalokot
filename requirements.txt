@@ -22,6 +22,10 @@ gradio==6.17.3
 # Data validation
 pydantic==2.13.4
 
+# Vector store
+chromadb>=1.0.0
+sentence-transformers>=3.0.0
+
 # Rate limiting
 slowapi==0.1.9
 
