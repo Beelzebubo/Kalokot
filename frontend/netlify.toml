@@ -1,16 +1,10 @@
 [build]
   command = "npm run build"
-  publish = ".output/public"
-  functions = ".output/server"
+  publish = "dist"
+  functions = ".netlify/functions-internal"
 
 # API proxy — routes /api/* requests to the Render backend
 [[redirects]]
   from = "/api/*"
   to = "https://kalokot-backend.onrender.com/api/:splat"
-  status = 200
-
-# All other routes → SSR function
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/server"
   status = 200
