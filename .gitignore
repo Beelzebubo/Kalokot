@@ -1,0 +1,52 @@
+# Justice_system — Corruption Risk Analyzer + Virtual Lawyer
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# Environment
+.env
+!/.env.example
+
+# Logs
+logs/
+*.log
+
+# Uploads (tender documents)
+uploads/
+*.pdf.done
+*.txt.done
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Docker
+.docker/
+
+# Backups
+backups/
+*.bak
+
+# Config overrides
+**/local.*
+*.pyc
+__pycache__/
+
+# Temp
+.env.tmp

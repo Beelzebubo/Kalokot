@@ -1,0 +1,51 @@
+services:
+  justice-api:
+    build: .
+    container_name: justice-api
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      - justice_data:/data
+      - justice_logs:/logs
+      - justice_uploads:/uploads
+      - ./docs/legal:/app/docs/legal:ro
+    environment:
+      - LOG_FILE=/logs/justice.log
+      - LEGAL_DIR=/app/docs/legal
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - PRODUCTION=1
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:8080}
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/complaint-types')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - justice_net
+
+  nginx:
+    image: nginx:alpine
+    container_name: justice-nginx
+    restart: unless-stopped
+    ports:
+      - "${JUSTICE_PORT:-80}:80"
+    volumes:
+      - ./nginx/justice.conf:/etc/nginx/conf.d/default.conf:ro
+      - justice_uploads:/uploads:ro
+    depends_on:
+      justice-api:
+        condition: service_healthy
+    networks:
+      - justice_net
+
+volumes:
+  justice_data:
+  justice_logs:
+  justice_uploads:
+
+networks:
+  justice_net:

@@ -1,0 +1,32 @@
+# Justice_system — Pinned Dependencies
+# Upgraded 2026-06-11
+# Run: pip install -r requirements.txt
+
+# PDF extraction
+PyMuPDF==1.27.2.3
+
+# YAML parsing (legal knowledge base)
+PyYAML==6.0.3
+
+# Web requests
+requests==2.34.2
+
+# LLM providers (install at least one)
+google-genai>=0.3.0              # Gemini (recommended for structured output)
+anthropic==0.109.1               # Anthropic Claude
+openai==2.41.1                   # OpenAI / OpenRouter
+
+# UI (Gradio)
+gradio==6.17.3
+
+# Data validation
+pydantic==2.13.4
+
+# Rate limiting
+slowapi==0.1.9
+
+# Type hints
+typing-extensions==4.15.0
+
+# Dev/testing
+pytest==9.0.3
