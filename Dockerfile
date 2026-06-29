@@ -22,6 +22,7 @@ COPY --chown=justice:justice .env.example /app/.env
 
 ENV PATH=/home/justice/.local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
+    API_HOST=0.0.0.0 \
     LEGAL_DIR=/app/docs/legal \
     LOG_FILE=/logs/justice.log \
     PRODUCTION=1

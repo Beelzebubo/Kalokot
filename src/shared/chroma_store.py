@@ -27,6 +27,8 @@ import chromadb
 from chromadb.config import Settings
 from chromadb.errors import NotFoundError, ChromaError
 
+from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
+
 try:
     from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
     _sentence_transformer_available = True
@@ -91,10 +93,13 @@ class ChromaLegalStore:
             self._collection = self._client.get_collection(collection_name)
         except NotFoundError:
             kwargs = dict(name=collection_name, metadata={"hnsw:space": "cosine"})
-            if _sentence_transformer_available:
+            use_hf = os.environ.get("USE_HF_EMBEDDINGS", "").lower() in ("1", "true", "yes")
+            if use_hf and _sentence_transformer_available:
                 kwargs["embedding_function"] = SentenceTransformerEmbeddingFunction(
                     model_name="all-MiniLM-L6-v2"
                 )
+            else:
+                kwargs["embedding_function"] = ONNXMiniLM_L6_V2()
             self._collection = self._client.create_collection(**kwargs)
 
         # In-memory cache of parent chunks for fast resolution
@@ -421,12 +426,14 @@ class ChromaLegalStore:
             self._client.delete_collection(self._collection_name)
         except ValueError:
             pass
+        use_hf = os.environ.get("USE_HF_EMBEDDINGS", "").lower() in ("1", "true", "yes")
+        ef = ONNXMiniLM_L6_V2()
+        if use_hf and _sentence_transformer_available:
+            ef = SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
         self._collection = self._client.create_collection(
             name=self._collection_name,
             metadata={"hnsw:space": "cosine"},
-            embedding_function=SentenceTransformerEmbeddingFunction(
-                model_name="all-MiniLM-L6-v2"
-            ),
+            embedding_function=ef,
         )
         self._parents.clear()
         self._children.clear()
